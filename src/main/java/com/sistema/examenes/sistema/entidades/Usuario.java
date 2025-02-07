@@ -3,6 +3,8 @@ package com.sistema.examenes.sistema.entidades;
 import java.util.HashSet;
 import java.util.Set;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+
 import jakarta.persistence.CascadeType;
 import jakarta.persistence.Entity;
 import jakarta.persistence.FetchType;
@@ -36,6 +38,7 @@ public class Usuario {
 	//EAGER = ansioso  LAZY=perezoso (busqueda) devolver todo los registros relacionado , lazy  si yo lo indico
 	//mappedBy indica que el usuario va ser propietario,  los roles asignar al usuario
 	@OneToMany(cascade = CascadeType.ALL, fetch = FetchType.EAGER, mappedBy = "usuario")
+	@JsonIgnore
 	private Set<UsuarioRol>usuarioRoles=new HashSet<>();
 
 	public Long getId() {
