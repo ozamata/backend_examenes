@@ -1,24 +1,30 @@
 package com.sistema.examenes.sistema.entidades;
 
+import java.util.Collection;
 import java.util.HashSet;
 import java.util.Set;
 
+import javax.persistence.CascadeType;
+import javax.persistence.Entity;
+import javax.persistence.FetchType;
+import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
+import javax.persistence.Id;
+import javax.persistence.OneToMany;
+import javax.persistence.Table;
+
+import org.springframework.security.core.GrantedAuthority;
+import org.springframework.security.core.userdetails.UserDetails;
+
 import com.fasterxml.jackson.annotation.JsonIgnore;
 
-import jakarta.persistence.CascadeType;
-import jakarta.persistence.Entity;
-import jakarta.persistence.FetchType;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.GenerationType;
-import jakarta.persistence.Id;
-import jakarta.persistence.OneToMany;
-import jakarta.persistence.Table;
+
 
 //crear anotaciones
 @Entity
 @Table (name="usuarios")
 
-public class Usuario {
+public class Usuario  implements UserDetails{
 	//poner id en autoincremtando
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -33,6 +39,19 @@ public class Usuario {
 	private boolean enable=true;
 	private String perfil;
 	
+	
+	   public Usuario(Long id, String username, String password, String nombre, String apellido, String email, String telefono, boolean enable, String perfil) {
+	        this.id = id;
+	        this.username = username;
+	        this.password = password;
+	        this.nombre = nombre;
+	        this.apellido = apellido;
+	        this.email = email;
+	        this.telefono = telefono;
+	        this.enable = enable;
+	        this.perfil = perfil;
+	    }
+	   
 	//un registro usuario podra tener muchos registro roles
 	//cascade  eliminar usuario con su relacion a otra tabla nestoralmeida.com
 	//EAGER = ansioso  LAZY=perezoso (busqueda) devolver todo los registros relacionado , lazy  si yo lo indico
@@ -125,6 +144,45 @@ public class Usuario {
 	 public Usuario() {
 		 
 	 }
+
+	@Override
+	public Collection<? extends GrantedAuthority> getAuthorities() {
+		// TODO Auto-generated method stub
+		//obteniendo los nombres de los roles
+		Set<Authority> autoridades=new HashSet<>();
+		//recorrer todo los roles y retornar
+		this.usuarioRoles.forEach(usuarioRol ->{
+			autoridades.add(new Authority(usuarioRol.getRol().getRolNombre()));
+		});
+		return autoridades;
+	}
+	
+	//este codigo demuestra que va estar activo 
+	  @Override
+	    public boolean isAccountNonExpired() {
+	        return true;
+	    }
+
+	    @Override
+	    public boolean isAccountNonLocked() {
+	        return true;
+	    }
+
+	    @Override
+	    public boolean isCredentialsNonExpired() {
+	        return true;
+	    }
+
+		@Override
+		public boolean isEnabled() {
+			// TODO Auto-generated method stub
+			return true;
+		}
+
+
+
+	
+	
 	
 
 }

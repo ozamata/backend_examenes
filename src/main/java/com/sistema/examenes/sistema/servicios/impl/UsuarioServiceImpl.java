@@ -7,6 +7,7 @@ import org.springframework.stereotype.Service;
 
 import com.sistema.examenes.sistema.entidades.Usuario;
 import com.sistema.examenes.sistema.entidades.UsuarioRol;
+import com.sistema.examenes.sistema.excepciones.UsuarioFoundException;
 import com.sistema.examenes.sistema.repositorios.RolRepository;
 import com.sistema.examenes.sistema.repositorios.UsuarioRepository;
 import com.sistema.examenes.sistema.servicios.UsuarioService;
@@ -26,7 +27,7 @@ public class UsuarioServiceImpl implements UsuarioService{
 			//si es diferente de null existe ya el usuario
 			if(usuarioLocal != null) {
 				System.out.println("el usuario ya existe");
-				throw new Exception("El usuario ya esta presente");
+				throw new UsuarioFoundException("El usuario ya esta presente");
 			}else {
 				//rrecorre los roles y guardar
 				for(UsuarioRol usuarioRol:usuarioRoles) {

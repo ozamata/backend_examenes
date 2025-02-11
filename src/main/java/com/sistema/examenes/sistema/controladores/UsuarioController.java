@@ -4,6 +4,8 @@ import java.util.HashSet;
 import java.util.Set;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
+import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -21,27 +23,33 @@ import com.sistema.examenes.sistema.servicios.UsuarioService;
 
 //ruta de una API ACCEDER
 @RequestMapping("/usuarios")
+@CrossOrigin("*")
 public class UsuarioController {
 	
 	//INYECTAR EL SERVICIO
 	@Autowired
 	private UsuarioService usuarioService;
 	
+	@Autowired
+	private BCryptPasswordEncoder bCryptPasswordEncoder;
+	
 	@PostMapping("/")
 	//peticion guardar usuario
 	//request body pasamos un objeto user 
 	public Usuario guardarUsuario(@RequestBody Usuario usuario )throws Exception {
-		Set<UsuarioRol> roles=new HashSet<>();
+		usuario.setPerfil("default.png");
+		//OBTIENE EL USUARIO Y LO ENCRYPTA
+		usuario.setPassword(this.bCryptPasswordEncoder.encode(usuario.getPassword()));
+		
+		Set<UsuarioRol> usuarioRoles=new HashSet<>();
 		Rol rol=new Rol();
 		rol.setRolId(2L);
-		rol.setNombre("NORMAL");
-		
-		
+		rol.setRolNombre("NORMAL");
 		UsuarioRol usuarioRol=new UsuarioRol();
 		usuarioRol.setUsuario(usuario);
 		usuarioRol.setRol(rol);
-		
-		return usuarioService.guardarUsuario(usuario, roles);
+		usuarioRoles.add(usuarioRol);
+		return usuarioService.guardarUsuario(usuario, usuarioRoles);
 		}
 	
 		//pathvariable pasar dato
